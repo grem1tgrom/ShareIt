@@ -1,11 +1,14 @@
 package ru.practicum.shareit.user.storage;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
+@Component
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new ConcurrentHashMap<>();
@@ -28,7 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> findAll() {
         return users.values().stream()
                 .sorted(Comparator.comparingLong(User::getId))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

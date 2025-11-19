@@ -1,11 +1,14 @@
 package ru.practicum.shareit.item.storage;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
+@Component
 public class InMemoryItemStorage implements ItemStorage {
 
     private final Map<Long, Item> items = new ConcurrentHashMap<>();
@@ -35,7 +38,7 @@ public class InMemoryItemStorage implements ItemStorage {
         return items.values().stream()
                 .filter(i -> Objects.equals(i.getOwnerId(), ownerId))
                 .sorted(Comparator.comparingLong(Item::getId))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -46,6 +49,6 @@ public class InMemoryItemStorage implements ItemStorage {
                 .filter(i -> i.getName().toLowerCase().contains(lower)
                         || i.getDescription().toLowerCase().contains(lower))
                 .sorted(Comparator.comparingLong(Item::getId))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

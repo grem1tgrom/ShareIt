@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -12,20 +12,15 @@ import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class ItemServiceImpl implements ItemService {
-
-    private static final Logger log = LoggerFactory.getLogger(ItemServiceImpl.class);
 
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
-
-    public ItemServiceImpl(ItemStorage itemStorage,
-                           UserStorage userStorage) {
-        this.itemStorage = itemStorage;
-        this.userStorage = userStorage;
-    }
 
     @Override
     public ItemDto create(Long ownerId, ItemDto dto) {
@@ -64,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
         ensureUserExists(ownerId);
         return itemStorage.findByOwnerId(ownerId).stream()
                 .map(ItemMapper::toDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -74,7 +69,7 @@ public class ItemServiceImpl implements ItemService {
         }
         return itemStorage.search(text).stream()
                 .map(ItemMapper::toDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private void ensureUserExists(Long userId) {
