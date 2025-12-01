@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-
     private final UserService service;
 
     @PostMapping
@@ -40,8 +39,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable Long id,
-                          @RequestBody UserDto patchDto) {
+    public UserDto update(@PathVariable Long id, @RequestBody UserDto patchDto) {
         log.debug("PATCH /users/{} patch={}", id, patchDto);
         return service.update(id, patchDto);
     }
