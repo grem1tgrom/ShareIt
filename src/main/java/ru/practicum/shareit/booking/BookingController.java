@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import org.springframework.web.bind. annotation.*;
+import ru.practicum.shareit.booking.dto. BookingDto;
+import ru. practicum.shareit.booking. dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 
@@ -32,7 +32,7 @@ public class BookingController {
     public BookingDto approve(@RequestHeader(USER_HEADER) Long ownerId,
                               @PathVariable Long bookingId,
                               @RequestParam("approved") boolean approved) {
-        log.debug("PATCH /bookings/{}?approved={} ownerId={}", bookingId, approved, ownerId);
+        log.debug("PATCH /bookings/{}? approved={} ownerId={}", bookingId, approved, ownerId);
         return bookingService.approve(ownerId, bookingId, approved);
     }
 
@@ -45,14 +45,14 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getByBooker(@RequestHeader(USER_HEADER) Long userId,
-                                        @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state) {
+                                        @RequestParam(name = "state", defaultValue = "ALL") BookingState state) {
         log.debug("GET /bookings userId={} state={}", userId, state);
-        return bookingService.getByBooker(userId, state);
+        return bookingService. getByBooker(userId, state);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getByOwner(@RequestHeader(USER_HEADER) Long ownerId,
-                                       @RequestParam(name = "state", required = false, defaultValue = "ALL") BookingState state) {
+                                       @RequestParam(name = "state", defaultValue = "ALL") BookingState state) {
         log.debug("GET /bookings/owner ownerId={} state={}", ownerId, state);
         return bookingService.getByOwner(ownerId, state);
     }

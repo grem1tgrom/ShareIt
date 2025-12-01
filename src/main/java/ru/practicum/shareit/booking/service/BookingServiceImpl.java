@@ -1,8 +1,8 @@
-package ru.practicum.shareit.booking.service;
+package ru.practicum.shareit. booking.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok. RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain. Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto. BookingDto;
@@ -10,19 +10,19 @@ import ru. practicum.shareit.booking. dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto. BookingState;
 import ru.practicum. shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru. practicum.shareit.booking. model.BookingStatus;
+import ru.practicum.shareit. booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru. practicum.shareit.exception. ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru. practicum.shareit.user. model.User;
-import ru. practicum.shareit.user. repository.UserRepository;
+import ru.practicum.shareit. user.model.User;
+import ru.practicum.shareit. user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream. Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,16 +47,16 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository. findById(request.getItemId())
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена: id=" + request.getItemId()));
 
-        if (! Boolean.TRUE.equals(item. getAvailable())) {
+        if (! Boolean.TRUE.equals(item.getAvailable())) {
             throw new ValidationException("Вещь недоступна для бронирования");
         }
 
         LocalDateTime now = LocalDateTime.now();
 
-        if (request. getStart() == null || request. getEnd() == null) {
+        if (request.getStart() == null || request.getEnd() == null) {
             throw new ValidationException("Даты бронирования обязательны");
         }
-        if (request.getStart().isBefore(now)) {
+        if (request.getStart(). isBefore(now)) {
             throw new ValidationException("Дата начала бронирования не может быть в прошлом");
         }
         if (! request.getEnd().isAfter(request.getStart())) {
@@ -72,7 +72,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setBooker(booker);
         booking.setStart(request.getStart());
         booking.setEnd(request.getEnd());
-        booking.setStatus(BookingStatus. WAITING);
+        booking.setStatus(BookingStatus.WAITING);
 
         Booking saved = bookingRepository.save(booking);
         log.info("Создано бронирование id={} пользователем id={} для вещи id={}", saved. getId(), userId, item.getId());
@@ -86,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено: id=" + bookingId));
 
-        if (!booking.getItem().getOwner().getId().equals(owner.getId())) {
+        if (! booking.getItem().getOwner().getId().equals(owner.getId())) {
             throw new NotFoundException("Бронирование не найдено: id=" + bookingId);
         }
         if (booking.getStatus() != BookingStatus.WAITING) {
@@ -105,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено: id=" + bookingId));
 
-        Long ownerId = booking.getItem(). getOwner().getId();
+        Long ownerId = booking.getItem().getOwner().getId();
         Long bookerId = booking.getBooker().getId();
         if (!requester.getId().equals(ownerId) && !requester.getId().equals(bookerId)) {
             throw new NotFoundException("Бронирование не найдено: id=" + bookingId);
@@ -126,7 +126,10 @@ public class BookingServiceImpl implements BookingService {
             case WAITING -> bookingRepository. findByBookerIdAndStatus(userId, BookingStatus.WAITING, SORT_DESC);
             case REJECTED -> bookingRepository. findByBookerIdAndStatus(userId, BookingStatus.REJECTED, SORT_DESC);
         };
-        return bookings.stream(). map(BookingMapper::toDto).collect(Collectors.toList());
+
+        return bookings.stream()
+                .map(BookingMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -142,6 +145,9 @@ public class BookingServiceImpl implements BookingService {
             case WAITING -> bookingRepository.findOwnerByStatus(ownerId, BookingStatus.WAITING, SORT_DESC);
             case REJECTED -> bookingRepository.findOwnerByStatus(ownerId, BookingStatus.REJECTED, SORT_DESC);
         };
-        return bookings.stream().map(BookingMapper::toDto).collect(Collectors.toList());
+
+        return bookings.stream()
+                .map(BookingMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
