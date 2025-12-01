@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class InMemoryItemStorage implements ItemStorage {
+
     private final Map<Long, Item> items = new ConcurrentHashMap<>();
     private final AtomicLong idSeq = new AtomicLong(0);
 
@@ -35,7 +36,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public List<Item> findByOwnerId(Long ownerId) {
         return items.values().stream()
-                .filter(i -> i.getOwner() != null && Objects.equals(i.getOwner().getId(), ownerId))
+                .filter(i -> Objects.equals(i.getOwnerId(), ownerId))
                 .sorted(Comparator.comparingLong(Item::getId))
                 .collect(Collectors.toList());
     }
@@ -45,8 +46,8 @@ public class InMemoryItemStorage implements ItemStorage {
         String lower = text.toLowerCase();
         return items.values().stream()
                 .filter(Item::getAvailable)
-                .filter(i -> (i.getName() != null && i.getName().toLowerCase().contains(lower))
-                        || (i.getDescription() != null && i.getDescription().toLowerCase().contains(lower)))
+                .filter(i -> i.getName().toLowerCase().contains(lower)
+                        || i.getDescription().toLowerCase().contains(lower))
                 .sorted(Comparator.comparingLong(Item::getId))
                 .collect(Collectors.toList());
     }
