@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16.1
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: shareit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: shareit
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build: server
+    container_name: shareit-server
+    image: shareit-server
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "9090:9090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/shareit
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=shareit
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  gateway:
+    build: gateway
+    container_name: shareit-gateway
+    image: shareit-gateway
+    depends_on:
+      - server
+    ports:
+      - "8080:8080"
+    environment:
+      - SHAREIT_SERVER_URL=http://shareit-server:9090
